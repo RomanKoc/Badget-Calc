@@ -1,0 +1,187 @@
+@if (loaded) {
+    <div class="gen">
+        <div class="calcular">
+            <section>
+                Información general
+                <article>
+                    Nombre presupuesto
+                    <input type="text" (focus)="clearInput($event)" placeholder="Nombre del proyecto" [ngModel]="stateService.nombre()" (ngModelChange)="stateService.setNombre($event)">
+                </article>
+                <article>
+                    Moneda
+                    <select [ngModel]="stateService.moneda_selet()" (ngModelChange)="stateService.setMonedaSelet($event)">
+                        @for(moneda of stateService.monedas(); track $index;){
+                            @if (moneda) {
+                                <option [value]="moneda">{{moneda | monedas}}</option>
+                            }
+                        }
+                    </select>
+                </article>
+            </section>
+            <hr>
+            <section>
+                Qué hay que calcular?
+                <div class="add-btn">
+                    <app-button [text]="'Añadir Seccion'" (click)="stateService.agregarSeccion()">
+                        <svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none">
+                            <g id="Edit / Add_Plus_Square">
+                            <path id="Vector" d="M8 12H12M12 12H16M12 12V16M12 12V8M4 16.8002V7.2002C4 6.08009 4 5.51962 4.21799 5.0918C4.40973 4.71547 4.71547 4.40973 5.0918 4.21799C5.51962 4 6.08009 4 7.2002 4H16.8002C17.9203 4 18.4801 4 18.9079 4.21799C19.2842 4.40973 19.5905 4.71547 19.7822 5.0918C20.0002 5.51962 20.0002 6.07967 20.0002 7.19978V16.7998C20.0002 17.9199 20.0002 18.48 19.7822 18.9078C19.5905 19.2841 19.2842 19.5905 18.9079 19.7822C18.4805 20 17.9215 20 16.8036 20H7.19691C6.07899 20 5.5192 20 5.0918 19.7822C4.71547 19.5905 4.40973 19.2842 4.21799 18.9079C4 18.4801 4 17.9203 4 16.8002Z" stroke="var(--btn-txt-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                        </svg>
+                    </app-button>
+                    <app-button [text]="'Añadir Servicio'" (click)="stateService.agregarServicio()">
+                        <svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none">
+                            <g id="Edit / Add_Plus">
+                            <path id="Vector" d="M6 12H12M12 12H18M12 12V18M12 12V6" stroke="var(--btn-txt-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                        </svg>
+                    </app-button>
+                </div>
+                @if(stateService.apartados().length > 0){
+                    <article cdkDropList (cdkDropListDropped)="drop($event)">
+                        @for(apartado of stateService.apartados(); track $index;){
+                            @if(isApartado(apartado)){
+                                <div class="service" cdkDrag (cdkDragStarted)="onDragStarted($event)">
+                                    <div cdkDragHandle>
+                                        <svg width="2.5rem" height="2.5rem" viewBox="0 0 24 24" fill="none" >
+                                            <rect width="24" height="24" fill="white"/>
+                                            <circle cx="9.5" cy="6" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="9.5" cy="10" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="9.5" cy="14" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="9.5" cy="18" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="6" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="10" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="14" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="18" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="service-info">
+                                        <input type="text" (focus)="clearInput($event)" [placeholder]="apartado.descripcion || ''" [(ngModel)]="apartado.descripcion">
+                                        <div>
+                                            <div>Cantidad</div>
+                                            <div>Precio</div>
+                                        </div>
+                                        <div>
+                                            <input type="number" min="0" [placeholder]="apartado.cantidad || 0" [(ngModel)]="apartado.cantidad">
+                                            <input type="number" min="0" [placeholder]="apartado.precio || 0" [(ngModel)]="apartado.precio">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <app-button [text]="''" (click)="stateService.borrarApartado(apartado.id)">
+                                            <svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <g id="SVGRepo_iconCarrier"> <path d="M20.5001 6H3.5" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M9.5 11L10 16" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M14.5 11L14 16" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="var(--btn-txt-color)" stroke-width="1.5"/> </g>
+                                            </svg>
+                                        </app-button>
+                                    </div>
+                                </div>
+                            }@else{
+                                <div class="subtitulo" cdkDrag (cdkDragStarted)="onDragStarted($event)">
+                                    <div cdkDragHandle>
+                                        <svg width="2.5rem" height="2.5rem" viewBox="0 0 24 24" fill="none" >
+                                            <rect width="24" height="24" fill="white"/>
+                                            <circle cx="9.5" cy="6" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="9.5" cy="10" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="9.5" cy="14" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="9.5" cy="18" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="6" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="10" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="14" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <circle cx="14.5" cy="18" r="0.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    
+                                        <input type="text" (focus)="clearInput($event)" [placeholder]="apartado.descripcion || ''" [(ngModel)]="apartado.descripcion">
+                                        <app-button [text]="''" (click)="stateService.borrarApartado(apartado.id)">
+                                            <svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <g id="SVGRepo_iconCarrier"> <path d="M20.5001 6H3.5" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M9.5 11L10 16" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M14.5 11L14 16" stroke="var(--btn-txt-color)" stroke-width="1.5" stroke-linecap="round"/> <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="var(--btn-txt-color)" stroke-width="1.5"/> </g>
+                                            </svg>
+                                        </app-button>
+                                    
+                                </div>
+                            }
+                        }
+                    </article>
+                }@else{
+                    <div class="empty">Añade una sección o un servicio</div>
+                }
+
+            </section>
+            <hr>
+            <section>
+                Extras
+                <article class="no-gap">
+                    <div class="extra">
+                        <input type="checkbox" [checked]="stateService.descuento().aplicado"  (click)="stateService.aplicarDescuento()">
+                        Añadir descuento (en %)
+                    </div>
+                    @if (stateService.descuento().aplicado) {
+                        <div class="extra-aplicated">
+                            <input  type="number" min="0" [placeholder]="stateService.descuento().valor || 0" [ngModel]="stateService.descuento().valor" (ngModelChange)="stateService.updateDescuento($event)">
+                        </div>
+                    }
+                    <hr>
+                    <div class="extra">
+                        <input type="checkbox" [checked]="stateService.iva().aplicado" (click)="stateService.aplicarIva()">
+                        Añadir impuesto (en %)
+                    </div>
+                        @if (stateService.iva().aplicado) {
+                            <div class="extra-aplicated">
+                                <input type="number" min="0" [placeholder]="stateService.iva().valor || 0" [ngModel]="stateService.iva().valor" (ngModelChange)="stateService.updateIva($event)">
+                            </div>
+                        }
+                </article>
+            </section>
+        </div>
+        <div class="resultado">
+            <div id="section-to-export">
+                <section>
+                    {{stateService.nombre()}}
+                </section>
+                <section>
+                    <div>Descripcion</div>
+                    <div>Cantidad</div>
+                    <div>Coste</div>
+                    <div>Total</div>
+                </section>
+                @if (stateService.apartados().length > 0) { <hr> }
+                @for(apartado of stateService.apartados(); track $index;){
+                    @if(isApartado(apartado)){
+                        <section class="content">
+                            <div>{{apartado.descripcion}}</div>
+                            <div>{{apartado.cantidad }}</div>
+                            <div>{{apartado.precio | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}}</div>
+                            <div>{{apartado.cantidad * apartado.precio | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}} </div>
+                        </section>
+                    }@else{
+                        <section class="content subt">
+                            @if(apartado && apartado.descripcion){
+                                <div>{{apartado.descripcion}}</div>
+                            }
+                        </section>
+                    }
+                }
+                <hr style="margin-top: 4rem;">
+                <section class="subtotal">
+                    <div><span>Subtotal:</span>{{stateService.subtotal() | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}} </div>
+                </section>
+                @if(stateService.descuento().aplicado){
+                    <section class="extra">
+                        <div><span>Descuento:</span>{{stateService.descuento().valor}} % ({{stateService.descuentoApplicado() | number:'1.2-2'}}{{stateService.moneda_selet() | moneda}})</div>
+                    </section>
+                }
+                @if(stateService.iva().aplicado){
+                    <section class="extra">
+                        <div><span>IVA:</span>{{stateService.iva().valor}} % ({{stateService.ivaApplicado() | number:'1.2-2'}}{{stateService.moneda_selet() | moneda}})</div>
+                    </section>
+                }
+                <section class="total">
+                    <div><span>Total:</span>{{stateService.totalFinal() | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}} </div>
+                </section>
+            </div>
+        </div>
+    </div>
+}

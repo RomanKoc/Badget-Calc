@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Apartado, Extra, Seccion } from '../interfaces/budget';
 
 @Injectable({
@@ -129,8 +129,11 @@ export class StateService {
 
     return total;
   };
-  
-  
+
+  isApartado(apartado: Seccion | Apartado): apartado is Apartado {
+    return apartado !== null && 'precio' in apartado;
+  }
+    
   obternerDeStorage() {
     const storage = localStorage.getItem('budget-data');
     if (storage) {

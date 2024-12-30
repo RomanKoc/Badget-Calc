@@ -1,0 +1,45 @@
+<div id="section-to-export">
+    <section>
+        {{stateService.nombre()}}
+    </section>
+    <section>
+        <div>Descripcion</div>
+        <div>Cantidad</div>
+        <div>Coste</div>
+        <div>Total</div>
+    </section>
+    @if (stateService.apartados().length > 0) { <hr> }
+    @for(apartado of stateService.apartados(); track $index;){
+        @if(stateService.isApartado(apartado)){
+            <section class="content">
+                <div>{{apartado.descripcion}}</div>
+                <div>{{apartado.cantidad }}</div>
+                <div>{{apartado.precio | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}}</div>
+                <div>{{apartado.cantidad * apartado.precio | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}} </div>
+            </section>
+        }@else{
+            <section class="content subt">
+                @if(apartado && apartado.descripcion){
+                    <div>{{apartado.descripcion}}</div>
+                }
+            </section>
+        }
+    }
+    <hr style="margin-top: 1.5rem;">
+    <section class="subtotal">
+        <div><span>Subtotal:</span>{{stateService.subtotal() | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}} </div>
+    </section>
+    @if(stateService.descuento().aplicado){
+        <section class="extra">
+            <div><span>Descuento:</span>{{stateService.descuento().valor}} % (-{{stateService.descuentoApplicado() | number:'1.2-2'}}{{stateService.moneda_selet() | moneda}})</div>
+        </section>
+    }
+    @if(stateService.iva().aplicado){
+        <section class="extra">
+            <div><span>IVA:</span>{{stateService.iva().valor}} % ({{stateService.ivaApplicado() | number:'1.2-2'}}{{stateService.moneda_selet() | moneda}})</div>
+        </section>
+    }
+    <section class="total">
+        <div><span>Total:</span>{{stateService.totalFinal() | number:'1.2-2'}} {{stateService.moneda_selet() | moneda}} </div>
+    </section>
+</div>

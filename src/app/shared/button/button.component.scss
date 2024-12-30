@@ -21,3 +21,14 @@ button{
         border-radius: 0.5rem;
     }
 }
+@media (max-width: 450px) {
+    button {
+        height: 2.5rem;
+        font-size: 0.8rem;
+        border-radius: 0.5rem;
+    }
+    svg{
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}

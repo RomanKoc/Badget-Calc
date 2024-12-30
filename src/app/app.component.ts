@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import jsPDF from 'jspdf';
@@ -6,14 +6,23 @@ import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
 import { CalculatorComponent } from './components/calculator/calculator.component';
 import { ButtonComponent } from './shared/button/button.component';
+import { ResultComponent } from './components/result/result.component';
+import { StateService } from './services/state.service';
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet,MatSlideToggleModule,CommonModule,CalculatorComponent,ButtonComponent],
+  imports: [RouterOutlet,MatSlideToggleModule,CommonModule,CalculatorComponent,ButtonComponent,ResultComponent],
   templateUrl: './app.component.html'
 })
 export class AppComponent {
+
+  stateService = inject(StateService);
+
+  ngOnInit(): void {
+    this.stateService.setMonedaSelet(this.stateService.monedas()[0]);
+    this.stateService.obternerDeStorage();
+  }
 
   generatePDF() {
     const section = document.getElementById('section-to-export');
